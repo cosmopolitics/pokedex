@@ -33,7 +33,13 @@ func getCommands() map[string]command {
 		},
 		"map": {
 			name: "map",
-			description: "prints 20 locations subsequent calls list the next twenty",
+			description: "gets next twenty locations",
+			callback: nil,
+			// called manually to implement page memory
+		},
+		"mapb": {
+			name: "map",
+			description: "gets previous page of locations",
 			callback: nil,
 			// called manually to implement page memory
 		},
