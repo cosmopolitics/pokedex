@@ -4,11 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"time"
+
 	"github.com/cosmopolitics/cache"
 )
 
 func main() {
 	reader := bufio.NewScanner(os.Stdin)
+	pokeCache := cache.NewCache(5 * time.Millisecond)
+
 	mapUrl := "https://pokeapi.co/api/v2/location-area"
 	previousMapUrl := ""
 
@@ -29,17 +33,15 @@ func main() {
 		commands := getCommands()
 
 		if cleanText[0] == "map" {
-			previousMapUrl = commandMap(&mapUrl)
+			previousMapUrl = commandMap(&mapUrl, &pokeCache)
 		} else if cleanText[0] == "mapb" {
 			if previousMapUrl == "" {
 				fmt.Printf("no previous map page\n")
 				continue
 			}
-			previousMapUrl = commandMap(&previousMapUrl)
+			previousMapUrl = commandMap(&previousMapUrl, &pokeCache)
 		} else if commands[cleanText[0]].callback != nil {
 			commands[cleanText[0]].callback()
 		}
 	}
 }
-
-
