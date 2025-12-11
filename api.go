@@ -15,45 +15,48 @@ type Link struct {
 
 type ApiResponse struct {
 	Count    int    `json:"count"`
-	Next     string `json:"next"`
-	Previous string `json:"previous"`
+	Next     *string `json:"next"`
+	Previous *string `json:"previous"`
 	Result   []Link `json:"results"`
 }
 
-func commandMap(cfg *config) error {
-	decodedJson := getJson(cfg.nextMapUrl, cfg)
+func commandMap(cfg *config, params []string) error {
+	decodedJson := getMapJson(cfg.nextMapUrl, cfg)
 
 	for i := 0; i < len(decodedJson.Result); i++ {
 		fmt.Printf("%s\n", decodedJson.Result[i].Name)
 	}
 
-	if decodedJson.Next == "" {
-		cfg.previousMapUrl = &decodedJson.Previous
+	if decodedJson.Next == nil {
+		cfg.previousMapUrl = decodedJson.Previous
 		return nil
 	}
-	cfg.nextMapUrl = &decodedJson.Next
-	cfg.previousMapUrl = &decodedJson.Previous
+	cfg.nextMapUrl = decodedJson.Next
+	cfg.previousMapUrl = decodedJson.Previous
 	return nil
 }
 
 
-func commandMapb(cfg *config) error {
-	decodedJson := getJson(cfg.previousMapUrl, cfg)
+func commandMapb(cfg *config, params []string) error {
+	if cfg.previousMapUrl == nil {
+		return fmt.Errorf("youre on the first page")
+	}
 
+	decodedJson := getMapJson(cfg.previousMapUrl, cfg)
 	for i := 0; i < len(decodedJson.Result); i++ {
 		fmt.Printf("%s\n", decodedJson.Result[i].Name)
 	}
 
-	if decodedJson.Next == "" {
-		cfg.previousMapUrl = &decodedJson.Previous
+	if decodedJson.Next == nil {
+		cfg.previousMapUrl = decodedJson.Previous
 		return nil
 	}
-	cfg.nextMapUrl = &decodedJson.Next
-	cfg.previousMapUrl = &decodedJson.Previous
+	cfg.nextMapUrl = decodedJson.Next
+	cfg.previousMapUrl = decodedJson.Previous
 	return nil
 }
 
-func getJson(url *string, cfg *config) ApiResponse {
+func getMapJson(url *string, cfg *config) ApiResponse {
 	if data, inDb := cfg.pokecache.Get(*url); inDb {
 		var decodedJson ApiResponse
 		json.Unmarshal(data, &decodedJson)

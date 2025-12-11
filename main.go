@@ -40,12 +40,12 @@ func main() {
 		// Do command
 		commands := getCommands(cfg)
 		if cmd, exist := commands[cleanText[0]]; exist {
-			err := cmd.callback(cfg)
+			err := cmd.callback(cfg, cleanText)
 			if err != nil {
 				fmt.Println(err)
 			}
 		} else {
-			fmt.Printf("%s doesnt exist, 'help' for usage", cleanText[0])
+			fmt.Printf("%s doesnt exist, 'help' for usage\n", cleanText[0])
 		}
 	}
 }

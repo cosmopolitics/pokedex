@@ -9,7 +9,7 @@ import (
 type command struct {
 	name string
 	description string
-	callback func(*config) error
+	callback func(cfg *config, params []string) error
 }
 
 func cleanInput(text string) []string {
@@ -40,10 +40,15 @@ func getCommands(cfg *config) map[string]command {
 			description: "gets previous page of locations",
 			callback: commandMapb,
 		},
+		"explore": {
+			name: "explore",
+			description: "lists all pokemon for given location",
+			callback: commandExplore,
+		},
 	}
 }
 
-func commandExit(cfg *config) error {
+func commandExit(cfg *config, params []string) error {
 	_, err := fmt.Printf("Closing the Pokedex... Goodbye!")
 	if err != nil {
 		return err
@@ -52,7 +57,7 @@ func commandExit(cfg *config) error {
 	return nil
 }
 
-func commandHelp(cfg *config) error {
+func commandHelp(cfg *config, params []string) error {
 	fmt.Printf("Welcome to the Pokedex!\nUsage:\n")
 	commands := getCommands(cfg)
 	for _, h := range commands {
