@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
+
+	"github.com/cosmopolitics/pokecache"
 )
 
 type command struct {
@@ -12,6 +15,13 @@ type command struct {
 	callback func() error
 }
 
+type config struct {
+	previousMapUrl *string
+	nextMapUrl *string
+	pokecache pokecache.Cache
+}
+
+func NewClient(timeout, cacheInterval time.Duration)
 
 func cleanInput(text string) []string {
 	output := strings.ToLower(text)
@@ -38,7 +48,7 @@ func getCommands() map[string]command {
 			// called manually to implement page memory
 		},
 		"mapb": {
-			name: "map",
+			name: "mapb",
 			description: "gets previous page of locations",
 			callback: nil,
 			// called manually to implement page memory
@@ -58,8 +68,8 @@ func commandExit() error {
 func commandHelp() error {
 	fmt.Printf("Welcome to the Pokedex!\nUsage:\n")
 	commands := getCommands()
-	for k, _ := range commands {
-		fmt.Printf("%s: %s\n", k, commands[k].description)
+	for _, h := range commands {
+		fmt.Printf("%s: %s\n", h.name, h.description)
 	}
 	return nil
 }

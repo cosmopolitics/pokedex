@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmopolitics/cache"
+	"github.com/cosmopolitics/pokecache"
 	"io"
 	"log"
 	"net/http"
@@ -21,7 +21,7 @@ type ApiResponse struct {
 	Result   []Link `json:"results"`
 }
 
-func commandMap(url *string, pokeCache *cache.Cache) string {
+func commandMap(url *string, pokeCache *pokecache.Cache) string {
 	decodedJson := getJson(url, pokeCache)
 
 	for i := 0; i < len(decodedJson.Result); i++ {
@@ -36,7 +36,7 @@ func commandMap(url *string, pokeCache *cache.Cache) string {
 	return decodedJson.Previous
 }
 
-func getJson(url *string, pokeCache *cache.Cache) ApiResponse {
+func getJson(url *string, pokeCache *pokecache.Cache) ApiResponse {
 	if data, inDb := pokeCache.Get(*url); inDb {
 		var decodedJson ApiResponse
 		json.Unmarshal(data, &decodedJson)

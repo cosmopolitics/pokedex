@@ -6,12 +6,12 @@ import (
 	"os"
 	"time"
 
-	"github.com/cosmopolitics/cache"
+	"github.com/cosmopolitics/pokecache"
 )
 
 func main() {
 	reader := bufio.NewScanner(os.Stdin)
-	pokeCache := cache.NewCache(5 * time.Millisecond)
+	pokeCache := pokecache.NewCache(25 * time.Second)
 
 	mapUrl := "https://pokeapi.co/api/v2/location-area"
 	previousMapUrl := ""
