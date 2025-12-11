@@ -9,12 +9,20 @@ import (
 	"github.com/cosmopolitics/pokecache"
 )
 
+type config struct {
+	previousMapUrl *string
+	nextMapUrl *string
+	pokecache pokecache.Cache
+}
+
 func main() {
 	reader := bufio.NewScanner(os.Stdin)
-	pokeCache := pokecache.NewCache(25 * time.Second)
-
 	mapUrl := "https://pokeapi.co/api/v2/location-area"
-	previousMapUrl := ""
+
+	cfg := &config{
+		pokecache: pokecache.NewCache(20 * time.Second),
+		nextMapUrl: &mapUrl,
+	}
 
 	fmt.Println("Welcome to the Pokedex!")
 	for {
@@ -30,18 +38,14 @@ func main() {
 		}
 
 		// Do command
-		commands := getCommands()
-
-		if cleanText[0] == "map" {
-			previousMapUrl = commandMap(&mapUrl, &pokeCache)
-		} else if cleanText[0] == "mapb" {
-			if previousMapUrl == "" {
-				fmt.Printf("no previous map page\n")
-				continue
+		commands := getCommands(cfg)
+		if cmd, exist := commands[cleanText[0]]; exist {
+			err := cmd.callback(cfg)
+			if err != nil {
+				fmt.Println(err)
 			}
-			previousMapUrl = commandMap(&previousMapUrl, &pokeCache)
-		} else if commands[cleanText[0]].callback != nil {
-			commands[cleanText[0]].callback()
+		} else {
+			fmt.Printf("%s doesnt exist, 'help' for usage", cleanText[0])
 		}
 	}
 }

@@ -1,2 +1,4 @@
 github.com/cosmopolitics/pokecache v0.0.1 h1:aH66TxfqFsl4tDyOPWpbXyuYcLK6z0grAmTAqf3lzyk=
 github.com/cosmopolitics/pokecache v0.0.1/go.mod h1:M6r7bpmgpm+okO8rgpT89uVhBtbPB1GpQF2tb2yOWfw=
+github.com/cosmopolitics/pokecache v0.0.2-0.20251211065803-ae7ab4434b4f h1:fxWDjxvqAAaZzaXki8vkV1PgdRXIwv0FGxVnT3nh+ZE=
+github.com/cosmopolitics/pokecache v0.0.2-0.20251211065803-ae7ab4434b4f/go.mod h1:M6r7bpmgpm+okO8rgpT89uVhBtbPB1GpQF2tb2yOWfw=

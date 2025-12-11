@@ -4,24 +4,13 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/cosmopolitics/pokecache"
 )
 
 type command struct {
 	name string
 	description string
-	callback func() error
+	callback func(*config) error
 }
-
-type config struct {
-	previousMapUrl *string
-	nextMapUrl *string
-	pokecache pokecache.Cache
-}
-
-func NewClient(timeout, cacheInterval time.Duration)
 
 func cleanInput(text string) []string {
 	output := strings.ToLower(text)
@@ -29,7 +18,7 @@ func cleanInput(text string) []string {
 	return words
 }
 
-func getCommands() map[string]command {
+func getCommands(cfg *config) map[string]command {
 	return map[string]command{
 		"exit": {
 			name: "exit",
@@ -44,19 +33,17 @@ func getCommands() map[string]command {
 		"map": {
 			name: "map",
 			description: "gets next twenty locations",
-			callback: nil,
-			// called manually to implement page memory
+			callback: commandMap,
 		},
 		"mapb": {
 			name: "mapb",
 			description: "gets previous page of locations",
-			callback: nil,
-			// called manually to implement page memory
+			callback: commandMapb,
 		},
 	}
 }
 
-func commandExit() error {
+func commandExit(cfg *config) error {
 	_, err := fmt.Printf("Closing the Pokedex... Goodbye!")
 	if err != nil {
 		return err
@@ -65,9 +52,9 @@ func commandExit() error {
 	return nil
 }
 
-func commandHelp() error {
+func commandHelp(cfg *config) error {
 	fmt.Printf("Welcome to the Pokedex!\nUsage:\n")
-	commands := getCommands()
+	commands := getCommands(cfg)
 	for _, h := range commands {
 		fmt.Printf("%s: %s\n", h.name, h.description)
 	}

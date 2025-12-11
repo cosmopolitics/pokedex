@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cosmopolitics/pokecache"
 	"io"
 	"log"
 	"net/http"
@@ -21,23 +20,41 @@ type ApiResponse struct {
 	Result   []Link `json:"results"`
 }
 
-func commandMap(url *string, pokeCache *pokecache.Cache) string {
-	decodedJson := getJson(url, pokeCache)
+func commandMap(cfg *config) error {
+	decodedJson := getJson(cfg.nextMapUrl, cfg)
 
 	for i := 0; i < len(decodedJson.Result); i++ {
 		fmt.Printf("%s\n", decodedJson.Result[i].Name)
 	}
 
 	if decodedJson.Next == "" {
-		return decodedJson.Previous
+		cfg.previousMapUrl = &decodedJson.Previous
+		return nil
 	}
-	*url = decodedJson.Next
-
-	return decodedJson.Previous
+	cfg.nextMapUrl = &decodedJson.Next
+	cfg.previousMapUrl = &decodedJson.Previous
+	return nil
 }
 
-func getJson(url *string, pokeCache *pokecache.Cache) ApiResponse {
-	if data, inDb := pokeCache.Get(*url); inDb {
+
+func commandMapb(cfg *config) error {
+	decodedJson := getJson(cfg.previousMapUrl, cfg)
+
+	for i := 0; i < len(decodedJson.Result); i++ {
+		fmt.Printf("%s\n", decodedJson.Result[i].Name)
+	}
+
+	if decodedJson.Next == "" {
+		cfg.previousMapUrl = &decodedJson.Previous
+		return nil
+	}
+	cfg.nextMapUrl = &decodedJson.Next
+	cfg.previousMapUrl = &decodedJson.Previous
+	return nil
+}
+
+func getJson(url *string, cfg *config) ApiResponse {
+	if data, inDb := cfg.pokecache.Get(*url); inDb {
 		var decodedJson ApiResponse
 		json.Unmarshal(data, &decodedJson)
 		return decodedJson
@@ -48,7 +65,7 @@ func getJson(url *string, pokeCache *pokecache.Cache) ApiResponse {
 		log.Fatal(err)
 	}
 	body, err := io.ReadAll(res.Body)
-	pokeCache.Add(*url, body)
+	cfg.pokecache.Add(*url, body)
 	defer res.Body.Close()
 	if res.StatusCode > 299 {
 		log.Fatalf("Response failed with status code: %d and\nbody: %s\n", res.StatusCode, body)
