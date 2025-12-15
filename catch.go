@@ -11,15 +11,20 @@ import (
 )
 
 func commandCatch(cfg *config, params []string) error {
-	fmt.Printf("Throwing a Pokeball at %s...\n", params[1])
+	if len(params) < 2 {
+		fmt.Println("Usage:\n\tcatch <pokemon name or id>")
+	}
 
 	baseUrl := "https://pokeapi.co/api/v2/"
-	body, err := makeApiGet(baseUrl + "pokemon/" + params[1], cfg)
+	body, _ := makeApiGet(baseUrl + "pokemon/" + params[1], cfg)
+	var pokemon Pokemon_endpoint
+	err := json.Unmarshal(body, &pokemon)
 
-	if err == errors.New("404") {
-		body, err := makeApiGet(baseUrl + "pokemon-species" + params[1], cfg)
+	if err != nil {
+		body, err := makeApiGet(baseUrl + "pokemon-species/" + params[1], cfg)
 		if err != nil {
-			log.Fatalln("couldnt find the pokemon")
+			fmt.Printf("couldnt find the pokemon")
+			return nil
 		}
 		var species_data Pokemon_Species
 		json.Unmarshal(body, &species_data)
@@ -30,13 +35,11 @@ func commandCatch(cfg *config, params []string) error {
 			fmt.Println(p.EntryNumber)
 		}
 		return nil
-
 	} else {
-		var pokemon Pokemon_endpoint
-		json.Unmarshal(body, &pokemon)
+		fmt.Printf("Throwing a Pokeball at %s...\n", pokemon.Name)
+		res := rand.Intn(pokemon.BaseExperience)
 
-		caught := (float64(pokemon.BaseExperience) * 0.9) > float64(rand.Intn(255))
-		if caught {
+		if res < 40 {
 			fmt.Println("you caught it :3")
 			cfg.their_pokedex[pokemon.Name] = pokemon
 			fmt.Printf("%s was added to your pokedex\n", pokemon.Name)
@@ -56,7 +59,7 @@ func makeApiGet(url string, cfg *config) ([]byte, error) {
 		return nil, errors.New("404")
 	}
 	if res.StatusCode > 299 || res.StatusCode < 200 {
-		return nil, fmt.Errorf("%d, not successful", res.StatusCode)
+		log.Fatalf("%d, not successful", res.StatusCode)
 	}
 
 	body, err := io.ReadAll(res.Body)

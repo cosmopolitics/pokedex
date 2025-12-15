@@ -7,9 +7,9 @@ import (
 )
 
 type command struct {
-	name string
+	name        string
 	description string
-	callback func(cfg *config, params []string) error
+	callback    func(cfg *config, params []string) error
 }
 
 func cleanInput(text string) []string {
@@ -21,34 +21,39 @@ func cleanInput(text string) []string {
 func getCommands(cfg *config) map[string]command {
 	return map[string]command{
 		"exit": {
-			name: "exit",
+			name:        "exit",
 			description: "exit the Pokedex",
-			callback: commandExit,
+			callback:    commandExit,
 		},
 		"help": {
-			name: "help",
+			name:        "help",
 			description: "prints help message",
-			callback: commandHelp,
+			callback:    commandHelp,
 		},
 		"map": {
-			name: "map",
+			name:        "map",
 			description: "gets next twenty locations",
-			callback: commandMap,
+			callback:    commandMap,
 		},
 		"mapb": {
-			name: "mapb",
+			name:        "mapb",
 			description: "gets previous page of locations",
-			callback: commandMapb,
+			callback:    commandMapb,
 		},
 		"explore": {
-			name: "explore",
+			name:        "explore",
 			description: "lists all pokemon for given location",
-			callback: commandExplore,
+			callback:    commandExplore,
 		},
 		"catch": {
-			name: "catch",
+			name:        "catch",
 			description: "throws a pokeball at a specified pokemon",
-			callback: commandCatch,
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect",
+			description: "get stats of pokemon in your pokedex (caught)",
+			callback:    commandInspect,
 		},
 	}
 }
@@ -70,4 +75,3 @@ func commandHelp(cfg *config, params []string) error {
 	}
 	return nil
 }
-
