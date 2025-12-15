@@ -11,7 +11,7 @@ import (
 )
 
 func commandCatch(cfg *config, params []string) error {
-	fmt.Printf("Throwing a Pokeball at %s\n", params[1])
+	fmt.Printf("Throwing a Pokeball at %s...\n", params[1])
 
 	baseUrl := "https://pokeapi.co/api/v2/"
 	body, err := makeApiGet(baseUrl + "pokemon/" + params[1], cfg)
@@ -35,11 +35,11 @@ func commandCatch(cfg *config, params []string) error {
 		var pokemon Pokemon_endpoint
 		json.Unmarshal(body, &pokemon)
 
-		caught := (float64(pokemon.BaseExperience) / 25.5) > float64(rand.Intn(255))
+		caught := (float64(pokemon.BaseExperience) * 0.9) > float64(rand.Intn(255))
 		if caught {
 			fmt.Println("you caught it :3")
 			cfg.their_pokedex[pokemon.Name] = pokemon
-			fmt.Printf("%s was added to your pokedex", pokemon.Name)
+			fmt.Printf("%s was added to your pokedex\n", pokemon.Name)
 			return nil
 		}
 		fmt.Println("you failed :(")

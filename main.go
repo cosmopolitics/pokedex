@@ -23,6 +23,7 @@ func main() {
 	cfg := &config{
 		pokecache: pokecache.NewCache(20 * time.Second),
 		nextMapUrl: &mapUrl,
+		their_pokedex: map[string]Pokemon_endpoint{},
 	}
 
 	fmt.Println("Welcome to the Pokedex!")
