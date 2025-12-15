@@ -12,6 +12,7 @@ import (
 type config struct {
 	previousMapUrl *string
 	nextMapUrl *string
+	their_pokedex map[string]Pokemon_endpoint
 	pokecache pokecache.Cache
 }
 

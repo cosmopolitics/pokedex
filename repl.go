@@ -45,6 +45,11 @@ func getCommands(cfg *config) map[string]command {
 			description: "lists all pokemon for given location",
 			callback: commandExplore,
 		},
+		"catch": {
+			name: "catch",
+			description: "throws a pokeball at a specified pokemon",
+			callback: commandCatch,
+		},
 	}
 }
 
